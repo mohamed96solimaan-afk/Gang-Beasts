@@ -56,6 +56,17 @@ How it works (non-obvious):
 - *Pink Boss* reproduces Street's boss: same mesh scaled 1.2918×, reshaped chest/head/arm bones and chest capsule colliders (`ApplyBossShape`, applied to the inactive copy), health 200, stun threshold 20, movement speed 30, animation speed 0.4.
 - Beasts balance on an invisible `ball` part under the hips (why they hover); *Show balance balls* toggles its renderer.
 
+## Level editor (`reconstruction/GangBeasts/Assets/Editor/LevelEditor/`, both branches)
+
+An editor-only extension (menu **Gang Beasts > Level Editor**, Ctrl+Shift+L) that builds new playable levels from the game's assets. It compiles into `Assembly-CSharp-Editor`, so the four runtime assemblies and `src/` are untouched and the proof still holds. User guide: `reconstruction/LEVEL-EDITOR.md`.
+
+- **Kit** (`GBLevelKit.cs`): the shipped levels have no prefabs; the objects every level needs (Player 1-4, Mob, Scene Manager, Main Camera + `SceneCamera`, Marmoset `Sky`, Music, AudioTimeScale, Framerate Counter, Directional Light) are extracted once from a reference level (Ring; Mob from Sandbox) into `Assets/LevelEditor/Kit/*.prefab`. Source scenes are opened and left without saving; `SaveAsPrefab` works on a temporary copy.
+- **New Level** (`GBLevelKit.CreateLevel`): new scene from the kit + floor/walls/kill zone, saved to `Assets/Scenes/<name>.unity`, added to Build Settings and to `SceneManager.levelList` on Menu.unity (`GBLevelRegistry.EditMenuLists` opens Menu, edits via `SerializedObject`, saves, reopens the previous scene). `PeekMenuList` reads the list from the text-serialized scene file without switching scenes.
+- **Build/Props** (`GBObjectFactory`, `GBPlacementTool`, `GBPropHarvester`): primitives, zones (`KillZone`/`WarpZone`/`DontTrackZone`), lights, Scene-view click-to-place; harvesting props from shipped levels into `Assets/LevelEditor/Props/<Level>/`.
+- **Check** (`GBLevelValidator`): rules derived from the scripts (Scene Manager tag, MainCamera + SceneCamera, player indices 0-3 once each, trigger kill zone, Sky, Build Settings, Menu list) with one-click fixes.
+- Unity 4.3 API / C# 3 only (no `SetParent`, `GetComponentInParent`, generic `FindObjectsOfType`, optional parameters). `UnityEngine.Object` is always fully qualified. The files were compile-checked with `mcs -langversion:3` against API stubs, not with Unity.
+- `assemble_project.py` regenerating the project drops `Assets/Editor`; re-apply it afterwards. `Assets/LevelEditor/` (kit, props) and new scenes are user content, not part of the reconstruction.
+
 ## How the pipeline fits together
 
 1. **Decompile** (ilspycmd, a separately downloaded tool) with `-lv CSharp3 -ds SparseIntegerSwitch=false` → `decompiled/` (reference only).
