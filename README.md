@@ -32,6 +32,10 @@ Some screen effects, like bloom and blur, need Unity **Pro** in this old version
 
 In Unity, go to **File → Build Settings**, pick **PC, Mac & Linux Standalone**, and click **Build**. All the levels are already in the build list, in the right order.
 
+## Make your own level
+
+The project includes a level editor (menu **Gang Beasts → Level Editor**, Ctrl+Shift+L). Its **New Level** tab builds a complete, playable level in one click, using the game's own beasts, camera, sky and scripts, and adds it to the in-game level list. Other tabs place props harvested from the shipped levels, physics objects, kill zones and lights, and check that the level has everything the game needs. Details: [reconstruction/LEVEL-EDITOR.md](reconstruction/LEVEL-EDITOR.md).
+
 ## What's in this repository
 
 ```
